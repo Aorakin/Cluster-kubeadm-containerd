@@ -158,7 +158,10 @@ mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ```
-
+## Join Cluster with kubeadm in Worker node
+```bash
+sudo kubeadm join <k8s-api-server-ip>:6443 --token <cluster-token> --discovery-token-ca-cert-hash sha256:<cluster-sha256>
+```
 
 ## Install CNI
 CNI stands for Container Network Interface => how pods talk to each other, to services, and to the internet.
