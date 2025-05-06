@@ -1,8 +1,46 @@
 # Setup cluster with Kubeadm and containerd
 
 ## Benefit of clustering
+| Benefit                  | Description                                                                 |
+|--------------------------|-----------------------------------------------------------------------------|
+| High Availability        | Ensures applications stay online even if some nodes fail                    |
+| Scalability              | Easily scale applications up or down based on demand                        |
+| Load Balancing           | Distributes traffic across pods for better performance                      |
+| Resource Optimization    | Efficient use of CPU and memory across the cluster                          |
+| Self-Healing             | Automatically replaces or restarts failed containers                        |
+| Rolling Updates          | Deploy updates with zero downtime and easy rollbacks                        |
+| Multi-Cloud Support      | Run workloads across multiple cloud providers or on-premise environments    |
+| Declarative Management   | Use YAML to define and automate the desired system state                    |
+
 
 ## Requiment
+  ### Master (Minimum)
+    CPU : 2 Cores 
+    RAM : 2 GB
+    Disk : 20 GB
+
+  ### Worker (Minimum)
+    CPU : 1 Core
+    RAM : 2 GB
+    Disk : 
+
+  
+  
+  **Port**
+
+  | Protocol | Direction | Port Range | Purpose                   | Used By                   |
+  |----------|-----------|------------|---------------------------|---------------------------|
+  | TCP      | Inbound   | 22         | SSH access                | Admin / Remote Management |
+  | TCP      | Inbound   | 6443       | Kubernetes API server     | All                       |
+  | TCP      | Inbound   | 2379-2380  | etcd server client API    | kube-apiserver, etcd      |
+  | TCP      | Inbound   | 10250      | Kubelet API               | Self, Control plane       |
+  | TCP      | Inbound   | 10259      | kube-scheduler            | Self                      |
+  | TCP      | Inbound   | 10257      | kub-controller-manager   | Self                      |
+  |
+  - Full network connectivity (DHCP/Static)
+  - Swap disable
+  - Unique Hostnmae
+
 
 ## Generate VM for testing with vagrant
 Edit Vagrantfile if you want to custom your own VM
@@ -108,11 +146,11 @@ sudo apt-mark hold kubelet kubeadm kubectl
 ```bash
 sudo systemctl enable --now kubelet
 ```
-## Init kubeadm&api-server in Master node
+## Init kubeadm & api-server in Master node
 ```bash
 sudo kubeadm init --apiserver-advertise-address=<<Your-master-ip>> --pod-network-cidr=<<your-pod-subnet>> 
 ```
-** pod-subnet range defines the space in which pods will get their IPs. like 10.244.0.0/16 **
+*pod-subnet range defines the space in which pods will get their IPs. like 10.244.0.0/16*
 
 To start using your cluster , you need to run the following as a regular user
 ```bash
@@ -129,4 +167,12 @@ ex. Flannel, Calico , Cilium
 in this case we use calico
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.2/manifests/calico.yaml
+```
+
+## Testing
+
+```bash
+kubectl run test --image=nginx
+kubectl expose pod test --port=80 --target-port=80 --type=ClusterIP
+curl <service-ip>
 ```
