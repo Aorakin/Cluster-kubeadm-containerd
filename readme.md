@@ -22,7 +22,7 @@
   ### Worker (Minimum)
     CPU : 1 Core
     RAM : 2 GB
-    Disk : 
+    Disk : recommend 10 GB (Scale with Application) 
 
   
   
